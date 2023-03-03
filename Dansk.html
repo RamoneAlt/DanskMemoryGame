@@ -1,0 +1,206 @@
+
+<head>
+<link href='https://fonts.googleapis.com/css?family=Alata' rel='stylesheet'>
+<style>
+body {
+  text-align: center;
+  overflow: hidden;
+  background-color: #000000;
+  color: #ffffff;
+  font-family: GeoBrandBold,CenturyGothic,AppleGothic,Gill Sans,Gill Sans MT,sans-serif;
+  font-weight: bold;
+}
+
+.phrase {
+  font-size: 75px;
+  margin: 0 auto;
+  margin-bottom: 4%;
+}
+
+.trans {
+  font-size: 30px;
+  margin-bottom: 7%;
+  text-decoration: underline;
+}
+
+.gameboard {
+  padding-bottom: calc(10% - 20px);
+  padding-top: calc(10% - 70px);
+  width: calc(70% - 20px);
+  background-color: #333333;
+  border-radius: 25px;
+  border-color: #121212;
+  margin: 0 auto;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+}
+
+.submitbutt {
+  font-family: 'Alata';
+  font-size: 20px;
+  height: 40px;
+  background-color: #58CC02;
+  border-radius: 10px;
+  border: solid rgb(95,181,0) 2px;
+  box-shadow: 2px 2px rgb(95,181,0);
+  transition: 0.3s;
+}
+
+.submitbutt:hover {
+  box-shadow: 2px 4px rgb(95,181,0);
+  letter-spacing: 1px;
+  opacity: 0.8;
+  transition: 0.1s;
+}
+
+.answer {
+  border-radius: 5px;
+  background-color: rgba(236, 236, 236, 1);
+  border-color: #121212;
+  font-size: 35px;
+  padding: 6px;
+  width: calc(75% - 1px);
+  font-family: 'Alata';
+  box-shadow: 1px 1px 2px rgba(236, 236, 236, 0.2);
+  transition: 0.3s;
+}
+
+.answer:hover {
+  border-radius: 8px;
+  background-color: rgba(236, 236, 236, 1);
+  border-color: #121212;
+  width: calc(75% - 1px);
+  font-family: 'Alata';
+  transition: 0.2s;
+  box-shadow: 4px 4px 5px rgba(236, 236, 236, 0.2);
+}
+
+.scow {
+  font-size: 25px;
+  transition: 0.5s;
+  text-shadow: #121212 2px 2px;
+}
+
+.scow:hover {
+  letter-spacing: 1px;
+  transition: 2s;
+}
+
+.mess {
+  font-size: 35px;
+}
+
+.timinguwu {
+  font-size: 40px;
+  font-family: 'Alata';
+}
+</style>
+</head>
+<body>
+<div class="gameboard" id="game">
+  <h1 class="trans">Translate the Danish phrase into English:</h1>
+  <p class="phrase" id="phrase"></p>
+  <form id="answer-form">
+  <input class="answer" type="text" id="answer" name="answer" placeholder="" autocomplete="off" />
+  <button class="submitbutt" type="submit">Submit</button>
+  </form>
+  <p class="scow">Score: <span class="scow" id="score">0</span></p>
+  <div class="timinguwu" id="timer">Time remaining: <span id="time">120</span></div>
+  <br>
+  <div class="mess" id="message"></div>
+</div>
+</body>
+<script>
+// Define the phrases array
+const phrases = [
+  { danish: "Hej", english: "Hello" },
+  { danish: "Hvordan har du det?", english: "How are you" },
+  { danish: "Tak", english: "Thank you" },
+  { danish: "Goddag", english: "Good day" },
+  { danish: "Farvel", english: "Goodbye" },
+  { danish: "Velkommen", english: "Welcome" },
+  { danish: "Undskyld", english: "Sorry" },
+  { danish: "Baseret", english: "Based" },
+  { danish: "Hvad hedder du?", english: "Whats your name" },
+  { danish: "Jeg hedder", english: "My name is" },
+  { danish: "Hva’ så?", english: "Whats up" },
+  { danish: "Jeg er fra", english: "I am from" },
+  { danish: "Hvor er...", english: "Where is" },
+  { danish: "Godt at se dig", english: "Good to see you" },
+  { danish: "Nej", english: "No" },
+  { danish: "For pokker", english: "Damn it" },
+  { danish: "God aften", english: "Good evening" },
+  { danish: "God nat", english: "Good night" },
+  { danish: "Vi sis i morgen", english: "See you tomorrow" },
+  
+  
+  // Add more phrases as desired
+];
+
+// Set up the game
+let score = 0;
+let currentPhrase = null;
+let timeRemaining = 120;
+let timerIntervalId = null;
+
+// Function to select a random phrase from the array
+function selectRandomPhrase() {
+  const index = Math.floor(Math.random() * phrases.length);
+  return phrases[index];
+}
+
+// Function to display a new random phrase
+function displayNewPhrase() {
+  currentPhrase = selectRandomPhrase();
+  document.getElementById("phrase").innerHTML = currentPhrase.danish;
+}
+
+function handleFormSubmit(event) {
+  event.preventDefault();
+  const answer = document.getElementById("answer").value.trim().toLowerCase();
+  if (answer === currentPhrase.english.toLowerCase()) {
+    score++;
+    document.getElementById("score").innerHTML = score;
+    document.getElementById("message").innerText = "Correct!";
+    displayNewPhrase();
+  } else {
+    document.getElementById("message").innerText = `Incorrect. The correct answer is "${currentPhrase.english}".`;
+    displayNewPhrase();
+  }
+  document.getElementById("answer").value = "";
+}
+
+
+// Function to update the timer display and end the game if time runs out
+function updateTimer() {
+  timeRemaining--;
+  document.getElementById("time").innerHTML = timeRemaining;
+  
+  // Change text color to slightly reddish hue after 15 seconds
+  if (timeRemaining <= 40) {
+    const tint = (40 - timeRemaining) * 6; // calculate the tint value
+    document.getElementById("time").style.color = `rgb(255, ${255 - tint}, ${255 - tint})`;
+  }
+  
+  // End the game if time runs out
+  if (timeRemaining === 0) {
+    clearInterval(timerIntervalId);
+    endGame();
+  }
+}
+
+
+
+
+// Function to end the game and display the final score
+function endGame() {
+  document.getElementById("message").innerText = `Game over. Your final score is ${score}.`;
+  document.getElementById("answer-form").removeEventListener("submit", handleFormSubmit);
+}
+
+// Set up event listeners
+document.getElementById("answer-form").addEventListener("submit", handleFormSubmit);
+
+// Start the game
+displayNewPhrase();
+timerIntervalId = setInterval(updateTimer, 1000);
+</script>
